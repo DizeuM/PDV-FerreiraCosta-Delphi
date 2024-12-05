@@ -1,0 +1,119 @@
+
+CREATE TABLE VENDEDOR (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nome NVARCHAR(255) NOT NULL,
+    cpf NVARCHAR(14) NOT NULL UNIQUE,
+    email NVARCHAR(255) NOT NULL UNIQUE,
+    telefone NVARCHAR(15),
+    senha NVARCHAR(255) NOT NULL,
+    usuario NVARCHAR(50) NOT NULL UNIQUE,
+    cargo NVARCHAR(50),
+    ativo BIT DEFAULT 1
+);
+
+CREATE TABLE PRODUTO_ESTOQUE (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    descricao NVARCHAR(255) NOT NULL,
+    valor_un DECIMAL(10, 2) NOT NULL,
+    fornecedor NVARCHAR(14),
+    qnt_estoque INT NOT NULL,
+    categoria NVARCHAR(50) NOT NULL
+);
+
+CREATE TABLE PEDIDO_VENDA (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nota NVARCHAR(5) NOT NULL UNIQUE,
+    tipo NVARCHAR(2) DEFAULT 'VD',
+    data_movim DATETIME DEFAULT GETDATE(),
+    valor_total_venda DECIMAL(10, 2) NOT NULL,
+    id_vendedor INT NOT NULL,
+    FOREIGN KEY (id_vendedor) REFERENCES VENDEDOR(id)
+);
+
+CREATE TABLE PEDIDO_VENDA_IT (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    id_pedido_venda INT NOT NULL,
+    id_prod INT NOT NULL,
+    fornecedor NVARCHAR(14),
+    qnt INT NOT NULL,
+    valor_un DECIMAL(10, 2) NOT NULL,
+    valor_total DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (id_pedido_venda) REFERENCES PEDIDO_VENDA(id),
+    FOREIGN KEY (id_prod) REFERENCES PRODUTO_ESTOQUE(id)
+);
+
+INSERT INTO VENDEDOR (nome, cpf, email, telefone, senha, usuario, cargo, ativo)
+VALUES
+('Mateus Dizeu', '123.456.789-00', 'mateus@dizeu.com', '81999990000', 'senha123', 'dizeu', 'Gerente', 1),
+('Edson Júnior', '987.654.321-00', 'edson@junior.com', '81988880000', 'senha123', 'edson', 'Vendedor', 1),
+
+INSERT INTO PRODUTO_ESTOQUE (descricao, valor_un, fornecedor, qnt_estoque, categoria)
+VALUES
+('TV 55 Polegadas', 2999.99, '10230480001960', 15, 'Eletro e eletrônicos'),
+('Liquidificador 500W', 199.99, '20510490001120', 50, 'Utilidades domésticas'),
+('Sofá 3 Lugares', 1599.99, '30780360001550', 10, 'Móveis e decoração'),
+('Jogo de Cama Queen', 299.99, '10230480001960', 30, 'Cama, mesa e banho'),
+('Furadeira Elétrica 500W', 399.99, '20510490001120', 20, 'Ferramentas e EPI'),
+('Óleo de Motor 5W30', 49.99, '30780360001550', 100, 'Automotivo'),
+('Fio Elétrico 2,5mm', 129.99, '10230480001960', 200, 'Materiais elétricos'),
+('Bomba de Água 1HP', 799.99, '20510490001120', 5, 'Materiais hidráulicos e bombas'),
+('Piso Cerâmico 60x60', 39.99, '30780360001550', 500, 'Pisos e revestimentos'),
+('Torneira Gourmet', 499.99, '10230480001960', 25, 'Louças, metais e acessórios'),
+('Fechadura Eletrônica', 699.99, '20510490001120', 10, 'Portas, janelas e fechaduras'),
+('Tinta Acrílica 18L', 299.99, '30780360001550', 20, 'Tintas e químicos'),
+('Notebook Gamer', 4999.99, '10230480001960', 8, 'Eletro e eletrônicos'),
+('Micro-ondas 30L', 699.99, '20510490001120', 20, 'Utilidades domésticas'),
+('Mesa de Jantar 6 Lugares', 1899.99, '30780360001550', 5, 'Móveis e decoração'),
+('Edredom King', 349.99, '10230480001960', 15, 'Cama, mesa e banho'),
+('Serra Circular 1200W', 599.99, '20510490001120', 10, 'Ferramentas e EPI'),
+('Amortecedor Traseiro', 199.99, '30780360001550', 50, 'Automotivo'),
+('Interruptor Simples', 49.99, '10230480001960', 300, 'Materiais elétricos'),
+('Filtro de Água 3 Estágios', 249.99, '20510490001120', 12, 'Materiais hidráulicos e bombas'),
+('Porcelanato 90x90', 89.99, '30780360001550', 400, 'Pisos e revestimentos'),
+('Misturador de Banheiro', 399.99, '10230480001960', 30, 'Louças, metais e acessórios'),
+('Tranca Digital', 899.99, '20510490001120', 8, 'Portas, janelas e fechaduras'),
+('Verniz Transparente 3,6L', 199.99, '30780360001550', 15, 'Tintas e químicos');
+
+INSERT INTO PEDIDO_VENDA (nota, tipo, valor_total_venda, id_vendedor)
+VALUES
+('1001', 'VD', 3599.97, 1),
+('1002', 'VD', 799.97, 2),
+('1003', 'VD', 1249.97, 1),
+('1004', 'VD', 2799.96, 2),
+('1005', 'VD', 7199.96, 1),
+('1006', 'VD', 2099.93, 2),
+('1007', 'VD', 1349.97, 2),
+('1008', 'VD', 3699.96, 1),
+('1009', 'VD', 5099.93, 1),
+('1010', 'VD', 899.97, 2),
+('1011', 'VD', 3499.94, 1),
+('1012', 'VD', 6199.92, 1);
+
+INSERT INTO PEDIDO_VENDA_IT (id_pedido_venda, id_prod, fornecedor, qnt, valor_un, valor_total)
+VALUES
+(1, 1, '10230480001960', 1, 2999.99, 2999.99),
+(1, 2, '20510490001120', 3, 199.99, 599.97),
+(2, 3, '30780360001550', 1, 1599.99, 1599.99),
+(2, 4, '10230480001960', 2, 299.99, 599.98),
+(3, 5, '20510490001120', 3, 399.99, 1199.97),
+(4, 2, '20510490001120', 4, 199.99, 799.96),
+(4, 10, '10230480001960', 5, 399.99, 1999.95),
+(5, 1, '10230480001960', 2, 2999.99, 5999.98),
+(5, 9, '30780360001550', 20, 59.99, 1199.96),
+(6, 5, '20510490001120', 3, 399.99, 1199.97),
+(6, 11, '20510490001120', 1, 899.99, 899.99),
+(7, 6, '30780360001550', 3, 199.99, 599.97),
+(7, 12, '30780360001550', 3, 249.99, 749.97),
+(8, 3, '30780360001550', 2, 1599.99, 3199.98),
+(8, 4, '10230480001960', 5, 99.99, 499.98),
+(9, 7, '10230480001960', 4, 129.99, 519.96),
+(9, 8, '20510490001120', 3, 799.99, 2399.97),
+(9, 11, '20510490001120', 1, 899.99, 899.99),
+(9, 12, '30780360001550', 5, 499.99, 2499.95),
+(10, 6, '30780360001550', 4, 199.99, 799.96),
+(10, 10, '10230480001960', 1, 99.99, 99.99),
+(11, 9, '30780360001550', 10, 39.99, 399.90),
+(11, 5, '20510490001120', 4, 399.99, 1599.96),
+(11, 2, '20510490001120', 8, 199.99, 1599.92),
+(12, 1, '10230480001960', 2, 2999.99, 5999.98),
+(12, 13, '20510490001120', 4, 299.99, 1199.96);
